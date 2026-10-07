@@ -59,3 +59,9 @@ Les tags sont stockés dans `chrome.storage.local` sous deux clés :
 ## Licence
 
 Apache-2.0 (icônes MynaUI)
+
+## Captures d'écran
+
+![Capture 1](icons/Screenshot_20261007_231048.png)
+
+![Capture 2](icons/screencapture-chrome-extension-mcaenejmlmidkkappmbhjiilhfljfchj-myfav-html-2026-10-07-23_12_14.png)
