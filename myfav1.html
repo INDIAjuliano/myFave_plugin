@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyFav — Mes favoris Chrome</title>
+<link rel="stylesheet" href="myfav.css">
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="nav">
+      <a class="brand" href="#"><span class="logo"><i data-icon="star-solid"></i></span><span>MyFav</span></a>
+      <div class="search-wrap">
+        <input class="search" id="search" placeholder="Rechercher dans mes favoris…  ( / )" autocomplete="off" autofocus>
+        <span class="search-icon"><i data-icon="search"></i></span>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="eyebrow"><i></i> Ma bibliothèque Chrome</div>
+        <h1>Retrouvez vos sites favoris <span>en un coup d’œil.</span></h1>
+        <p>
+          Vos favoris Chrome, lus directement par l’extension : plus d’export ni d’import.
+          Tout ajout, déplacement ou suppression apparaît ici en temps réel.
+        </p>
+        <div class="hero-actions">
+          <button class="primary" id="manage"><i data-icon="layout-dashboard"></i> Gérer dans Chrome</button>
+          <button class="secondary" id="shortcuts"><i data-icon="keyboard"></i> Raccourcis clavier</button>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-top">
+          <div><strong id="count">0</strong><small>favoris synchronisés</small></div>
+          <i data-icon="star-solid"></i>
+        </div>
+        <div class="mini-sites">
+          <span><i data-icon="globe"></i></span><span><i data-icon="book-open"></i></span><span><i data-icon="code"></i></span><span><i data-icon="swatches"></i></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="category-bar" aria-label="Catégories">
+    <div class="category-bar-inner">
+      <div class="category-list" id="categoryList"></div>
+    </div>
+  </div>
+
+  <main class="content">
+    <div class="layout">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <h3>Filtres</h3>
+          <button class="icon-btn" id="sidebarToggle" title="Réduire/Agrandir" aria-label="Réduire/Agrandir" data-icon="panel-right-close"></button>
+        </div>
+        <div class="sidebar-body">
+          <div class="filter-section">
+            <div class="filter-title">Recherche rapide</div>
+            <div class="search-wrap sidebar-search">
+              <input class="search" id="treeSearch" placeholder="Filtrer dossiers/favoris…" autocomplete="off">
+              <span class="search-icon"><i data-icon="search"></i></span>
+            </div>
+          </div>
+          <div class="filter-section">
+            <div class="filter-title">Dossiers</div>
+            <div class="tree" id="folderTree"></div>
+          </div>
+          <div class="filter-section">
+            <div class="filter-title">Tags</div>
+            <div class="tag-bar">
+              <input class="search tag-input" id="tagCreate" placeholder="Nouveau tag…" autocomplete="off">
+              <button class="icon-btn tag-add" id="tagAddBtn" title="Ajouter un tag" aria-label="Ajouter un tag" data-icon="plus"></button>
+            </div>
+            <div class="tag-list" id="tagList"></div>
+          </div>
+          <div class="filter-section" id="bookmarksInFolderSection" hidden>
+            <div class="filter-title">Favoris du dossier <span id="currentFolderName"></span></div>
+            <ul class="bookmark-list" id="bookmarksInFolder"></ul>
+          </div>
+        </div>
+      </aside>
+      <div class="main-col">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <h2>Mes sites favoris</h2>
+            <p>Cliquez sur une carte pour voir ses détails, cochez-la pour la sélectionner.</p>
+            <div class="enable" id="enableBox" hidden>
+              <button class="btn-l" id="enablePreviews"><i data-icon="image"></i> Activer les aperçus des sites</button>
+              <small>Chrome demandera l'accès aux sites : l'extension lit seulement la page de chaque favori pour en tirer l'image, sans rien envoyer à un tiers.</small>
+            </div>
+          </div>
+          <div class="toolbar-right">
+            <label class="field" for="sortSelect">Trier par</label>
+            <select class="btn sort-select" id="sortSelect">
+              <option value="date-desc">Date ↓</option>
+              <option value="date-asc">Date ↑</option>
+              <option value="name-asc">Nom A → Z</option>
+              <option value="name-desc">Nom Z → A</option>
+              <option value="folder-asc">Dossier A → Z</option>
+            </select>
+          </div>
+        </div>
+        <section class="bookmarks-grid" id="grid"></section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="bulk" id="bulk" role="toolbar" aria-label="Actions sur la sélection">
+  <span class="count" id="bulkCount"></span>
+  <button class="btn" id="bulkAll"><i data-icon="check-square"></i> Tout</button>
+  <select class="btn" id="bulkMove" aria-label="Déplacer vers un dossier"></select>
+  <button class="btn" id="bulkOpen"><i data-icon="external-link"></i> Ouvrir</button>
+  <button class="btn danger" id="bulkDel"><i data-icon="trash"></i> Supprimer</button>
+  <button class="btn" id="bulkClear" aria-label="Désélectionner" data-icon="x"></button>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" role="dialog" aria-label="Détails du favori">
+  <div class="dr-top">
+    <div class="dr-nav">
+      <button class="icon-btn" id="drPrev" title="Précédent (←)" aria-label="Précédent" data-icon="chevron-left"></button>
+      <button class="icon-btn" id="drNext" title="Suivant (→)" aria-label="Suivant" data-icon="chevron-right"></button>
+    </div>
+    <div class="dr-nav">
+      <button class="icon-btn" id="drRefresh" title="Actualiser l’aperçu" aria-label="Actualiser l’aperçu" data-icon="refresh"></button>
+      <button class="icon-btn" id="drClose" title="Fermer (Échap)" aria-label="Fermer" data-icon="x"></button>
+    </div>
+  </div>
+  <div class="dr-scroll" id="drBody"></div>
+  <div class="dr-actions">
+    <a class="primary" id="drVisit" target="_blank" rel="noopener"><i data-icon="external-link"></i> Visiter le site</a>
+    <button class="btn-l" id="drCopy"><i data-icon="copy"></i> Copier</button>
+    <button class="btn-l" id="drEdit"><i data-icon="pencil"></i> Modifier</button>
+    <button class="btn-l" id="drTags" title="Tags"><i data-icon="tag"></i> Tags</button>
+    <button class="btn-l danger" id="drDelete"><i data-icon="trash"></i> Supprimer</button>
+  </div>
+  <div class="dr-tags" id="drTagsPanel" hidden>
+    <div class="dr-tags-header">
+      <strong>Tags</strong>
+      <button class="icon-btn" id="drTagsClose" aria-label="Fermer" data-icon="x"></button>
+    </div>
+    <div class="dr-tags-body">
+      <div class="tag-bar">
+        <input class="search tag-input" id="drTagCreate" placeholder="Nouveau tag…" autocomplete="off">
+        <button class="icon-btn tag-add" id="drTagAddBtn" title="Ajouter un tag" aria-label="Ajouter un tag" data-icon="plus"></button>
+      </div>
+      <div class="tag-list" id="drTagList"></div>
+    </div>
+  </div>
+</aside>
+
+<div class="modal" id="editModal" hidden>
+  <form class="modal-card" id="editForm">
+    <h3>Modifier le favori</h3>
+    <label class="field">Titre<input id="edTitle" required></label>
+    <label class="field">Adresse (URL)<input id="edUrl" type="url" required></label>
+    <label class="field">Dossier<select id="edFolder"></select></label>
+    <div class="modal-actions">
+      <button type="button" class="cancel" id="edCancel">Annuler</button>
+      <button type="submit" class="primary">Enregistrer</button>
+    </div>
+  </form>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script type="module" src="myfav.js"></script>
+</body>
+</html>

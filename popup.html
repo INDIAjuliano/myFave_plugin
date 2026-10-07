@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>MyFav</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<div class="box">
+  <div class="search-wrap">
+    <input id="q" class="search" placeholder="Rechercher un favori…" autocomplete="off" autofocus>
+    <span class="search-icon"><i data-icon="search"></i></span>
+  </div>
+  <div id="list" class="list" role="listbox"></div>
+  <footer>
+    <span class="hint"><kbd><i data-icon="chevron-up-down"></i></kbd><kbd><i data-icon="corner-down-left"></i></kbd></span>
+    <button id="library"><i data-icon="layout-dashboard"></i> Ouvrir la bibliothèque</button>
+  </footer>
+</div>
+<script type="module" src="popup.js"></script>
+</body>
+</html>
